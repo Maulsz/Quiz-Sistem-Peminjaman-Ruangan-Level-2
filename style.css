@@ -1,226 +1,323 @@
 /* =====================================================================
- * BERKAS : style.css
- * TUGAS  : Mengatur tampilan dengan CSS murni (tanpa Bootstrap/Tailwind).
- *
- * CATATAN:
- *  - Warna disimpan di variabel CSS (:root). Ganti di satu tempat,
- *    seluruh halaman ikut berubah.
- *  - Katalog memakai CSS GRID   -> lihat .grid-katalog
- *  - Form memakai CSS FLEXBOX   -> lihat .form-pinjam dan .kolom-input
+ * BERKAS : style.css (Total Redesign / Modern UI)
+ * TUGAS  : Sistem Peminjaman Ruangan SMKIT Ibnul Qayyim
  * ===================================================================== */
 
-/* ---------- 1. Variabel warna ---------- */
+/* ---------- 1. Variabel Warna & Tema ---------- */
 :root {
-  --warna-utama: #0f766e;
-  --warna-sukses: #15803d;
-  --warna-bahaya: #b91c1c;
-  --warna-latar: #f3f4f6;
-  --warna-kartu: #ffffff;
-  --warna-teks: #1f2937;
-  --warna-redup: #6b7280;
-  --warna-garis: #d1d5db;
-  --sudut: 8px;
+  --primary: #0f766e;
+  --primary-hover: #115e59;
+  --primary-light: #f0fdfa;
+  --success-bg: #dcfce7;
+  --success-text: #15803d;
+  --danger-bg: #fee2e2;
+  --danger-text: #b91c1c;
+  --bg-body: #f8fafc;
+  --bg-card: #ffffff;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --border-color: #cbd5e1;
+  --radius-box: 16px;
+  --radius-item: 8px;
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg:
+    0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ---------- 2. Pengaturan dasar ---------- */
+/* ---------- 2. Reset & Dasar ---------- */
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-  margin: 0;
-  font-family: system-ui, sans-serif;
-  background: var(--warna-latar);
-  color: var(--warna-teks);
-  line-height: 1.5;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  background-color: var(--bg-body);
+  color: var(--text-main);
+  line-height: 1.6;
+  padding-bottom: 2rem;
 }
 
+/* ---------- 3. Header ---------- */
 header {
-  background: var(--warna-utama);
+  background: linear-gradient(135deg, var(--primary), #042f2e);
   color: #ffffff;
   text-align: center;
-  padding: 1.25rem 1rem;
+  padding: 3rem 1rem 4rem;
+  box-shadow: var(--shadow-md);
 }
 
 header h1 {
-  margin: 0;
-  font-size: 1.5rem;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  margin-bottom: 0.5rem;
 }
 
 header p {
-  margin: 0.25rem 0 0;
   opacity: 0.9;
+  font-size: 1rem;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
+/* ---------- 4. Layout Utama ---------- */
 main {
   max-width: 1000px;
-  margin: 0 auto;
-  padding: 1rem;
+  margin: -2rem auto 0;
+  padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 section {
-  background: var(--warna-kartu);
-  border: 1px solid var(--warna-garis);
-  border-radius: var(--sudut);
-  padding: 1rem 1.25rem;
-  margin-bottom: 1.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-box);
+  padding: 1.75rem;
+  box-shadow: var(--shadow-md);
 }
 
 h2 {
-  margin-top: 0;
-  font-size: 1.2rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-/* ---------- 3. Katalog (CSS GRID) ---------- */
-/* CATATAN: auto-fill + minmax membuat jumlah kolom menyesuaikan lebar layar.
-   Layar lebar -> banyak kolom, layar HP -> 1 kolom. Tanpa media query! */
+/* ---------- 5. Katalog (Grid Responsif) ---------- */
 .grid-katalog {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.25rem;
 }
 
 .kartu-ruangan {
-  border: 1px solid var(--warna-garis);
-  border-radius: var(--sudut);
-  padding: 0.75rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-item);
+  padding: 1.25rem;
+  transition: var(--transition);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.kartu-ruangan:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary);
 }
 
 .kartu-ruangan h3 {
-  margin: 0 0 0.5rem;
-  font-size: 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 0.5rem;
 }
 
 .kartu-ruangan p {
-  margin: 0.25rem 0;
   font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 0.25rem;
 }
 
 .status {
-  display: inline-block;
-  margin-top: 0.5rem;
-  padding: 0.15rem 0.6rem;
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  margin-top: 0.75rem;
+  padding: 0.25rem 0.75rem;
   border-radius: 999px;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 600;
+  letter-spacing: 0.025em;
 }
 
 .status-tersedia {
-  background: #dcfce7;
-  color: var(--warna-sukses);
+  background: var(--success-bg);
+  color: var(--success-text);
 }
 
 .status-dipinjam {
-  background: #fee2e2;
-  color: var(--warna-bahaya);
+  background: var(--danger-bg);
+  color: var(--danger-text);
 }
 
-/* ---------- 4. Form (CSS FLEXBOX) ---------- */
-/* CATATAN: flex-wrap: wrap membuat input turun ke baris baru jika tidak muat. */
+/* ---------- 6. Form Peminjaman (Flexbox Khusus Dropdown Luas) ---------- */
 .form-pinjam {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
-  gap: 1rem;
+  gap: 1.25rem;
 }
 
 .kolom-input {
   display: flex;
   flex-direction: column;
-  flex: 1 1 180px;
-  gap: 0.25rem;
+  flex: 1 1 240px; /* Lebar minimum diset agar kotak select tidak sempit/terpotong */
+  gap: 0.5rem;
 }
 
 label {
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   font-weight: 600;
+  color: var(--text-main);
 }
 
 input,
 select {
-  padding: 0.5rem;
-  border: 1px solid var(--warna-garis);
-  border-radius: 6px;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-item);
   font: inherit;
+  font-size: 0.95rem;
+  background-color: #ffffff;
+  color: var(--text-main);
+  transition: var(--transition);
+}
+
+/* Mengatur agar teks dalam opsi select aman dan tidak terlalu padat */
+select option {
+  padding: 0.75rem;
+  background: #ffffff;
+  color: var(--text-main);
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.15);
 }
 
 button {
   border: none;
-  border-radius: 6px;
-  padding: 0.55rem 1rem;
+  border-radius: var(--radius-item);
+  padding: 0.75rem 1.5rem;
   font: inherit;
+  font-weight: 600;
+  font-size: 0.95rem;
   cursor: pointer;
+  transition: var(--transition);
 }
 
 .tombol-pinjam {
-  background: var(--warna-utama);
+  background: var(--primary);
   color: #ffffff;
+  box-shadow: var(--shadow-sm);
+}
+
+.tombol-pinjam:hover {
+  background: var(--primary-hover);
+  box-shadow: var(--shadow-md);
 }
 
 .tombol-batal {
-  background: var(--warna-bahaya);
+  background: var(--danger-text);
   color: #ffffff;
-  padding: 0.3rem 0.7rem;
-  font-size: 0.85rem;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.8rem;
 }
 
-button:hover {
-  opacity: 0.85;
+.tombol-batal:hover {
+  opacity: 0.9;
 }
 
-/* ---------- 5. Pesan berhasil / gagal ---------- */
+button:active {
+  transform: scale(0.98);
+}
+
+/* ---------- 7. Pesan Notifikasi ---------- */
 .pesan {
-  margin: 1rem 0 0;
-  padding: 0.5rem 0.75rem;
-  border-radius: 6px;
+  margin-top: 1.25rem;
+  padding: 0.875rem 1rem;
+  border-radius: var(--radius-item);
+  font-size: 0.9rem;
+  font-weight: 500;
 }
 
-/* CATATAN: :empty menyembunyikan kotak pesan selama belum ada teksnya. */
 .pesan:empty {
   display: none;
 }
 
 .pesan-sukses {
-  background: #dcfce7;
-  color: var(--warna-sukses);
+  background: var(--success-bg);
+  color: var(--success-text);
+  border: 1px solid #86efac;
 }
 
 .pesan-gagal {
-  background: #fee2e2;
-  color: var(--warna-bahaya);
+  background: var(--danger-bg);
+  color: var(--danger-text);
+  border: 1px solid #fca5a5;
 }
 
-/* ---------- 6. Tabel ---------- */
-/* CATATAN: overflow-x: auto membuat tabel bisa digeser di layar HP. */
+/* ---------- 8. Tabel Riwayat ---------- */
 .wadah-tabel {
+  width: 100%;
   overflow-x: auto;
+  border-radius: var(--radius-item);
+  border: 1px solid var(--border-color);
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
+  white-space: nowrap;
+  background: #ffffff;
 }
 
 th,
 td {
-  padding: 0.5rem;
-  border-bottom: 1px solid var(--warna-garis);
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid var(--border-color);
   text-align: left;
+  font-size: 0.9rem;
 }
 
 th {
-  background: #f9fafb;
+  background: #f1f5f9;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+tbody tr:hover {
+  background-color: var(--primary-light);
 }
 
 .kosong {
   text-align: center;
-  color: var(--warna-redup);
+  color: var(--text-muted);
   font-style: italic;
+  padding: 2rem;
 }
 
+/* ---------- 9. Footer ---------- */
 footer {
   text-align: center;
   font-size: 0.85rem;
-  color: var(--warna-redup);
-  padding: 1rem;
+  color: var(--text-muted);
+  padding: 2rem 1rem 0;
 }
