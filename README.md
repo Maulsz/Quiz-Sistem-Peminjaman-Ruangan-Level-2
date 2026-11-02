@@ -25,11 +25,9 @@ Di level ini **nama fungsi dan langkah-langkahnya sudah disediakan**. Tugasmu: m
 - JOB DESK: <br>
   KELOMPOK 3
 
-  > [!IMPORTANT]
-  >
-  > 1. **Rizky (Menganalisis)** <br>
-  > 2. **Zaky (Mencatat progres)** <br>
-  > 3. **Maul (Menulis Code)** <br>
+  > 1. **Rizky (Menganalisis)**
+  > 2. **Zaky (Mencatat progres)**
+  > 3. **Maul (Menulis Code)**
 
 - 29 Oktober 2026 <br>
   data.js<br>
