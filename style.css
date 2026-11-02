@@ -1,0 +1,226 @@
+/* =====================================================================
+ * BERKAS : style.css
+ * TUGAS  : Mengatur tampilan dengan CSS murni (tanpa Bootstrap/Tailwind).
+ *
+ * CATATAN:
+ *  - Warna disimpan di variabel CSS (:root). Ganti di satu tempat,
+ *    seluruh halaman ikut berubah.
+ *  - Katalog memakai CSS GRID   -> lihat .grid-katalog
+ *  - Form memakai CSS FLEXBOX   -> lihat .form-pinjam dan .kolom-input
+ * ===================================================================== */
+
+/* ---------- 1. Variabel warna ---------- */
+:root {
+  --warna-utama: #0f766e;
+  --warna-sukses: #15803d;
+  --warna-bahaya: #b91c1c;
+  --warna-latar: #f3f4f6;
+  --warna-kartu: #ffffff;
+  --warna-teks: #1f2937;
+  --warna-redup: #6b7280;
+  --warna-garis: #d1d5db;
+  --sudut: 8px;
+}
+
+/* ---------- 2. Pengaturan dasar ---------- */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: var(--warna-latar);
+  color: var(--warna-teks);
+  line-height: 1.5;
+}
+
+header {
+  background: var(--warna-utama);
+  color: #ffffff;
+  text-align: center;
+  padding: 1.25rem 1rem;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+header p {
+  margin: 0.25rem 0 0;
+  opacity: 0.9;
+}
+
+main {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+section {
+  background: var(--warna-kartu);
+  border: 1px solid var(--warna-garis);
+  border-radius: var(--sudut);
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+h2 {
+  margin-top: 0;
+  font-size: 1.2rem;
+}
+
+/* ---------- 3. Katalog (CSS GRID) ---------- */
+/* CATATAN: auto-fill + minmax membuat jumlah kolom menyesuaikan lebar layar.
+   Layar lebar -> banyak kolom, layar HP -> 1 kolom. Tanpa media query! */
+.grid-katalog {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.kartu-ruangan {
+  border: 1px solid var(--warna-garis);
+  border-radius: var(--sudut);
+  padding: 0.75rem 1rem;
+}
+
+.kartu-ruangan h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+}
+
+.kartu-ruangan p {
+  margin: 0.25rem 0;
+  font-size: 0.9rem;
+}
+
+.status {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.status-tersedia {
+  background: #dcfce7;
+  color: var(--warna-sukses);
+}
+
+.status-dipinjam {
+  background: #fee2e2;
+  color: var(--warna-bahaya);
+}
+
+/* ---------- 4. Form (CSS FLEXBOX) ---------- */
+/* CATATAN: flex-wrap: wrap membuat input turun ke baris baru jika tidak muat. */
+.form-pinjam {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+.kolom-input {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 180px;
+  gap: 0.25rem;
+}
+
+label {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+input,
+select {
+  padding: 0.5rem;
+  border: 1px solid var(--warna-garis);
+  border-radius: 6px;
+  font: inherit;
+}
+
+button {
+  border: none;
+  border-radius: 6px;
+  padding: 0.55rem 1rem;
+  font: inherit;
+  cursor: pointer;
+}
+
+.tombol-pinjam {
+  background: var(--warna-utama);
+  color: #ffffff;
+}
+
+.tombol-batal {
+  background: var(--warna-bahaya);
+  color: #ffffff;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.85rem;
+}
+
+button:hover {
+  opacity: 0.85;
+}
+
+/* ---------- 5. Pesan berhasil / gagal ---------- */
+.pesan {
+  margin: 1rem 0 0;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+}
+
+/* CATATAN: :empty menyembunyikan kotak pesan selama belum ada teksnya. */
+.pesan:empty {
+  display: none;
+}
+
+.pesan-sukses {
+  background: #dcfce7;
+  color: var(--warna-sukses);
+}
+
+.pesan-gagal {
+  background: #fee2e2;
+  color: var(--warna-bahaya);
+}
+
+/* ---------- 6. Tabel ---------- */
+/* CATATAN: overflow-x: auto membuat tabel bisa digeser di layar HP. */
+.wadah-tabel {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--warna-garis);
+  text-align: left;
+}
+
+th {
+  background: #f9fafb;
+}
+
+.kosong {
+  text-align: center;
+  color: var(--warna-redup);
+  font-style: italic;
+}
+
+footer {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--warna-redup);
+  padding: 1rem;
+}

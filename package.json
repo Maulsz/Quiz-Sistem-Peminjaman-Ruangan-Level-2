@@ -1,0 +1,10 @@
+{
+  "name": "peminjaman-ruangan",
+  "version": "1.0.0",
+  "description": "Sistem Peminjaman Ruangan Sederhana - Proyek PWEB-11A (Vanilla JS ES Modules)",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "uji": "node uji-logika.mjs"
+  }
+}

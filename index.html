@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sistem Peminjaman Ruangan</title>
+
+    <!-- =================================================================
+    BERKAS : index.html
+    TUGAS  : KERANGKA tampilan saja (wadah kosong).
+             Isi katalog, pilihan ruangan, dan baris tabel DIISI OLEH main.js.
+
+    CARA MENJALANKAN:
+      1. Buka folder proyek di VS Code.
+      2. Klik kanan index.html -> "Open with Live Server".
+      CATATAN: JANGAN klik dua kali berkas ini (alamatnya jadi file://...).
+               ES Modules akan diblokir browser karena aturan CORS.
+
+    ATURAN PENTING:
+      - Setiap elemen yang akan diisi/diambil oleh main.js WAJIB punya id.
+      - Jika mengganti id di sini, ganti juga di main.js (bagian LANGKAH 2).
+  ================================================================== -->
+
+    <link rel="stylesheet" href="style.css" />
+
+    <!-- INSTRUKSI: type="module" WAJIB ada agar perintah import/export bisa jalan.
+       CATATAN: Script module otomatis menunggu HTML selesai dimuat (seperti defer),
+       jadi aman diletakkan di <head>. -->
+    <script type="module" src="main.js"></script>
+  </head>
+  <body>
+    <header>
+      <h1>Sistem Peminjaman Ruangan</h1>
+      <p>SMK IT Ibnul Qayyim Makassar</p>
+    </header>
+
+    <main>
+      <!-- BAGIAN 1: KATALOG RUANGAN
+         Kartu-kartu ruangan dibuat otomatis oleh main.js dari data.js -->
+      <section aria-labelledby="judul-katalog">
+        <h2 id="judul-katalog">Katalog Ruangan</h2>
+        <div id="katalog-ruangan" class="grid-katalog">
+          <!-- Diisi oleh main.js -> fungsi tampilkanKatalog() -->
+        </div>
+      </section>
+
+      <!-- BAGIAN 2: FORM PEMINJAMAN
+         CATATAN: Atribut required & min adalah validasi lapis pertama (browser).
+         Validasi lapis kedua tetap ada di peminjaman.js agar bisa dites. -->
+      <section aria-labelledby="judul-form">
+        <h2 id="judul-form">Form Peminjaman</h2>
+
+        <form id="form-pinjam" class="form-pinjam">
+          <div class="kolom-input">
+            <label for="pilihan-ruangan">Ruangan</label>
+            <select id="pilihan-ruangan" required>
+              <!-- Pilihan ruangan diisi oleh main.js -> tampilkanPilihanRuangan() -->
+              <!-- <option value="">-- Pilih ruangan --</option> -->
+            </select>
+          </div>
+
+          <div class="kolom-input">
+            <label for="nama-peminjam">Nama Peminjam</label>
+            <input
+              type="text"
+              id="nama-peminjam"
+              placeholder="Contoh: Pak Ahmad"
+              required
+            />
+          </div>
+
+          <div class="kolom-input">
+            <label for="jumlah-orang">Jumlah Orang</label>
+            <input
+              type="number"
+              id="jumlah-orang"
+              min="1"
+              placeholder="Contoh: 30"
+              required
+            />
+          </div>
+
+          <div class="kolom-input">
+            <label for="durasi-jam">Durasi (jam)</label>
+            <!-- step="0.5" artinya bisa diisi per setengah jam: 0.5, 1, 1.5, dst. -->
+            <input
+              type="number"
+              id="durasi-jam"
+              min="0.5"
+              step="0.5"
+              placeholder="Contoh: 2"
+              required
+            />
+          </div>
+
+          <button type="submit" class="tombol-pinjam">Pinjam Ruangan</button>
+        </form>
+
+        <!-- Tempat pesan berhasil/gagal. role="status" membantu pembaca layar. -->
+        <p id="pesan" class="pesan" role="status"></p>
+      </section>
+
+      <!-- BAGIAN 3: TABEL DAFTAR PEMINJAMAN -->
+      <section aria-labelledby="judul-daftar">
+        <h2 id="judul-daftar">Daftar Peminjaman</h2>
+        <p>Total ruangan dipinjam: <strong id="total-dipinjam">0</strong></p>
+
+        <div class="wadah-tabel">
+          <table>
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Ruangan</th>
+                <th>Peminjam</th>
+                <th>Jumlah Orang</th>
+                <th>Durasi</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="isi-tabel">
+              <!-- Baris tabel diisi oleh main.js -> tampilkanTabelPinjaman() -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>Proyek PWEB-11A &middot; Vanilla JavaScript ES Modules</p>
+    </footer>
+  </body>
+</html>
