@@ -5,6 +5,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "uji": "node uji-logika.mjs"
+    "uji": "node uji-logika.mjs",
+    "uji:tantangan": "node uji-tantangan.mjs"
   }
 }

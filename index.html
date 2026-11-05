@@ -24,8 +24,8 @@
     <link rel="stylesheet" href="style.css" />
 
     <!-- INSTRUKSI: type="module" WAJIB ada agar perintah import/export bisa jalan.
-       CATATAN: Script module otomatis menunggu HTML selesai dimuat (seperti defer),
-       jadi aman diletakkan di <head>. -->
+        CATATAN: Script module otomatis menunggu HTML selesai dimuat (seperti defer),
+        jadi aman diletakkan di <head>. -->
     <script type="module" src="main.js"></script>
   </head>
   <body>
@@ -39,6 +39,35 @@
          Kartu-kartu ruangan dibuat otomatis oleh main.js dari data.js -->
       <section aria-labelledby="judul-katalog">
         <h2 id="judul-katalog">Katalog Ruangan</h2>
+
+        <!-- TAMBAHAN INPUT PENCARIAN TANTANGAN -->
+        <div
+          class="pencarian-katalog"
+          style="margin-bottom: 1rem; display: flex; gap: 1rem; flex-wrap: wrap"
+        >
+          <div class="kolom-input" style="flex: 1; min-width: 200px">
+            <label for="cari-jumlah">Cari Jumlah Peserta:</label>
+            <input
+              type="number"
+              id="cari-jumlah"
+              placeholder="Contoh: 30"
+              min="1"
+              style="width: 100%; padding: 0.5rem"
+            />
+          </div>
+          <div class="kolom-input" style="flex: 1; min-width: 200px">
+            <label for="cari-fasilitas">Cari Fasilitas:</label>
+            <input
+              type="text"
+              id="cari-fasilitas"
+              placeholder="Contoh: AC"
+              style="width: 100%; padding: 0.5rem"
+            />
+          </div>
+        </div>
+        <p id="info-cari" style="font-style: italic; margin-bottom: 1rem"></p>
+        <!-- AKHIR TAMBAHAN INPUT -->
+
         <div id="katalog-ruangan" class="grid-katalog">
           <!-- Diisi oleh main.js -> fungsi tampilkanKatalog() -->
         </div>

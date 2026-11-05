@@ -2,7 +2,7 @@
  * LEVEL 2 — SEDANG  |  TUGAS 4  |  BERKAS: main.js
  * ---------------------------------------------------------------------
  * TUGAS BERKAS INI : SATU-SATUNYA berkas yang boleh memakai DOM
- *                    (document, querySelector, innerHTML) dan Event Listener.
+ *                   (document, querySelector, innerHTML) dan Event Listener.
  *
  * KERJAKAN SETELAH npm run uji MENUNJUKKAN 32/32.
  *
@@ -29,6 +29,7 @@ import {
   sedangDipinjam,
   ambilDaftarPinjaman,
 } from "./peminjaman.js";
+import { cariRuanganCocok } from "./helper.js";
 
 // =====================================================================
 // LANGKAH 2: AMBIL ELEMEN HTML (sudah jadi)
@@ -43,19 +44,51 @@ const inputDurasi = document.querySelector("#durasi-jam");
 const elemenPesan = document.querySelector("#pesan");
 const isiTabel = document.querySelector("#isi-tabel");
 const elemenTotal = document.querySelector("#total-dipinjam");
+const inputJumlahCari = document.getElementById("cari-jumlah");
+const inputFasilitas = document.getElementById("cari-fasilitas");
+const infoCari = document.getElementById("info-cari");
+const containerKatalog = document.getElementById("katalog-ruangan");
 
 // =====================================================================
 // LANGKAH 3: FUNGSI-FUNGSI TAMPILAN
 // =====================================================================
 
-/** CONTOH (sudah jadi): menampilkan kartu-kartu ruangan. Pelajari polanya! */
+/** Menampilkan kartu-kartu ruangan (Sudah diperbarui dengan fitur pencarian cariRuanganCocok) */
 function tampilkanKatalog() {
-  elemenKatalog.innerHTML = ""; // 1) kosongkan dulu agar tidak dobel
+  elemenKatalog.innerHTML = ""; // Kosongkan kontainer katalog
 
-  daftarRuangan.forEach((ruangan) => {
-    // 2) ulangi untuk setiap ruangan
+  // Ambil nilai dari input pencarian
+  const jumlahVal = inputJumlahCari ? inputJumlahCari.value.trim() : "";
+  const fasilitasVal = inputFasilitas ? inputFasilitas.value.trim() : "";
+
+  // Jika input jumlah peserta kosong (belum diketik), set ke string kosong/undefined agar menampilkan semua ruangan
+  // Jika diisi, ubah ke tipe angka (Number)
+  const jumlahOrang = jumlahVal !== "" ? Number(jumlahVal) : "";
+
+  // Panggil fungsi cariRuanganCocok (jika jumlahOrang kosong dan fasilitas kosong, helper akan otomatis menampilkan semua data)
+  const ruanganDitampilkan = cariRuanganCocok(
+    daftarRuangan,
+    jumlahOrang,
+    fasilitasVal,
+  );
+
+  // Jika hasil pencarian kosong, tampilkan pesan
+  if (ruanganDitampilkan.length === 0) {
+    if (infoCari) {
+      infoCari.textContent = "Tidak ada ruangan yang cocok.";
+    }
+    return;
+  }
+
+  // Bersihkan teks info jika ada hasil
+  if (infoCari) {
+    infoCari.textContent = "";
+  }
+
+  // Render kartu ruangan ke layar
+  ruanganDitampilkan.forEach((ruangan) => {
     const dipinjam = sedangDipinjam(ruangan.id);
-    const kartu = document.createElement("article"); // 3) buat elemen
+    const kartu = document.createElement("article");
     kartu.className = "kartu-ruangan";
     kartu.innerHTML = `
       <h3>${ruangan.namaRuangan}</h3>
@@ -65,23 +98,11 @@ function tampilkanKatalog() {
         ${dipinjam ? "Dipinjam" : "Tersedia"}
       </span>
     `;
-    elemenKatalog.appendChild(kartu); // 4) masukkan ke halaman
+    elemenKatalog.appendChild(kartu);
   });
 }
-
 /** Mengisi pilihan ruangan pada dropdown <select>. */
 function tampilkanPilihanRuangan() {
-  // TODO 4.1 : Tiru pola tampilkanKatalog() di atas.
-  //   LANGKAH a: Isi pilihanRuangan.innerHTML dengan satu opsi kosong:
-  //              '<option value="">-- Pilih ruangan --</option>'
-  //   LANGKAH b: Ulangi daftarRuangan dengan forEach. Untuk setiap ruangan:
-  //              - buat elemen 'option' dengan document.createElement
-  //              - opsi.value       = ruangan.id
-  //              - opsi.textContent = `${ruangan.namaRuangan} (maks. ${ruangan.kapasitas} orang)`
-  //              - JIKA sedangDipinjam(ruangan.id) bernilai true:
-  //                  opsi.disabled = true;
-  //                  opsi.textContent += ' - sedang dipinjam';
-  //              - masukkan opsi ke pilihanRuangan dengan appendChild
   pilihanRuangan.innerHTML = `<option value="">-- Pilih ruangan --</option>`;
   daftarRuangan.forEach((ruangan) => {
     const dipinjam = sedangDipinjam(ruangan.id);
@@ -98,9 +119,7 @@ function tampilkanPilihanRuangan() {
 }
 
 /**
- * (Sudah jadi) Membuat satu sel tabel <td> berisi teks.
- * CATATAN KEAMANAN: memakai textContent (bukan innerHTML) karena isinya
- * berasal dari ketikan pengguna. Kode HTML yang diketik tidak akan dijalankan.
+ * Membuat satu sel tabel <td> berisi teks.
  */
 function buatSel(isi) {
   const sel = document.createElement("td");
@@ -108,14 +127,14 @@ function buatSel(isi) {
   return sel;
 }
 
-/** (Sudah jadi) Membuat sel berisi tombol Batalkan yang menyimpan id ruangan. */
+/** Membuat sel berisi tombol Batalkan yang menyimpan id ruangan. */
 function buatSelTombolBatal(idRuangan) {
   const sel = document.createElement("td");
   const tombol = document.createElement("button");
   tombol.type = "button";
   tombol.className = "tombol-batal";
   tombol.textContent = "Batalkan";
-  tombol.dataset.id = idRuangan; // tersimpan sebagai atribut data-id
+  tombol.dataset.id = idRuangan;
   sel.appendChild(tombol);
   return sel;
 }
@@ -125,7 +144,6 @@ function tampilkanTabelPinjaman() {
   const semuaPinjaman = ambilDaftarPinjaman();
   isiTabel.innerHTML = "";
 
-  // Sudah jadi: jika belum ada data, tampilkan baris keterangan.
   if (semuaPinjaman.length === 0) {
     isiTabel.innerHTML = `
       <tr><td colspan="6" class="kosong">Belum ada ruangan yang dipinjam.</td></tr>
@@ -144,21 +162,9 @@ function tampilkanTabelPinjaman() {
     baris.appendChild(buatSelTombolBatal(pinjaman.idRuangan));
     isiTabel.appendChild(baris);
   });
-
-  // TODO 4.2 : Ulangi semuaPinjaman dengan forEach((pinjaman, indeks) => { ... }).
-  //   Untuk setiap pinjaman:
-  //   LANGKAH a: buat elemen 'tr' bernama baris
-  //   LANGKAH b: tambahkan 6 sel ke baris dengan baris.appendChild(...):
-  //              1. buatSel(indeks + 1)                      -> nomor urut
-  //              2. buatSel(pinjaman.namaRuangan)
-  //              3. buatSel(pinjaman.namaPeminjam)
-  //              4. buatSel(`${pinjaman.jumlahOrang} orang`)
-  //              5. buatSel(formatDurasi(pinjaman.durasiJam)) -> dari helper.js
-  //              6. buatSelTombolBatal(pinjaman.idRuangan)
-  //   LANGKAH c: masukkan baris ke isiTabel dengan appendChild
 }
 
-/** (Sudah jadi) Menampilkan pesan sukses/gagal di bawah form. */
+/** Menampilkan pesan sukses/gagal di bawah form. */
 function tampilkanPesan(teks, jenis) {
   elemenPesan.textContent = teks;
   elemenPesan.className = `pesan pesan-${jenis}`;
@@ -166,16 +172,10 @@ function tampilkanPesan(teks, jenis) {
 
 /** Memperbarui SELURUH tampilan sekaligus. */
 function perbaruiTampilan() {
-  // tampilkanPesan();
-  tampilkanKatalog(); // sudah jadi
+  tampilkanKatalog();
   tampilkanPilihanRuangan();
   tampilkanTabelPinjaman();
   elemenTotal.textContent = hitungTotalDipinjam();
-
-  // TODO 4.3 : Lengkapi fungsi ini:
-  //   - panggil tampilkanPilihanRuangan()
-  //   - panggil tampilkanTabelPinjaman()
-  //   - isi elemenTotal.textContent dengan hasil hitungTotalDipinjam()
 }
 
 // =====================================================================
@@ -183,23 +183,6 @@ function perbaruiTampilan() {
 // =====================================================================
 
 formPinjam.addEventListener("submit", (event) => {
-  // TODO 4.4 : Tulis isi event submit:
-  //   LANGKAH a: event.preventDefault();   <- WAJIB, agar halaman tidak reload
-  //   LANGKAH b: cari objek ruangan yang dipilih:
-  //              const ruanganTerpilih = daftarRuangan.find(
-  //                (ruangan) => ruangan.id === pilihanRuangan.value
-  //              );
-  //   LANGKAH c: panggil pinjamRuangan(ruanganTerpilih, inputNama.value,
-  //              Number(inputJumlah.value), Number(inputDurasi.value))
-  //              dan simpan hasilnya di const hasil.
-  //   CATATAN  : nilai <input> selalu berupa TEKS, jadi angka diubah dengan Number().
-  //   LANGKAH d: jika hasil.berhasil:
-  //                tampilkanPesan(hasil.pesan, 'sukses');
-  //                formPinjam.reset();
-  //                perbaruiTampilan();
-  //              selain itu:
-  //                tampilkanPesan(hasil.pesan, 'gagal');
-
   event.preventDefault();
   const ruanganTerpilih = daftarRuangan.find(
     (ruangan) => ruangan.id === pilihanRuangan.value,
@@ -221,17 +204,7 @@ formPinjam.addEventListener("submit", (event) => {
   }
 });
 
-// CATATAN (Event Delegation): SATU listener di <tbody> untuk semua tombol
-// Batalkan, karena tombol dibuat ulang setiap kali tabel diperbarui.
 isiTabel.addEventListener("click", (event) => {
-  // TODO 4.5 : Tulis isi event klik tombol Batalkan:
-  //   LANGKAH a: const tombol = event.target.closest('.tombol-batal');
-  //              jika tombol tidak ada (!tombol), hentikan dengan return.
-  //   LANGKAH b: ambil id ruangan dari tombol.dataset.id
-  //   LANGKAH c: (opsional) minta konfirmasi dengan confirm('Yakin ...?')
-  //   LANGKAH d: jika batalkanPinjaman(id) bernilai true:
-  //                tampilkanPesan('Peminjaman berhasil dibatalkan.', 'sukses');
-  //                perbaruiTampilan();
   const tombol = event.target.closest(".tombol-batal");
   if (!tombol) return;
   const idRuangan = tombol.dataset.id;
@@ -241,6 +214,13 @@ isiTabel.addEventListener("click", (event) => {
     perbaruiTampilan();
   }
 });
+
+// TAMBAHAN EVENT LISTENER PENCARIAN KATALOG SECARA REAL-TIME
+if (inputJumlahCari && inputFasilitas) {
+  // Menjalankan fungsi tampilkanKatalog setiap kali user mengetik di kolom pencarian
+  inputJumlahCari.addEventListener("input", tampilkanKatalog);
+  inputFasilitas.addEventListener("input", tampilkanKatalog);
+}
 
 // =====================================================================
 // LANGKAH 5: TAMPILAN AWAL (sudah jadi)
