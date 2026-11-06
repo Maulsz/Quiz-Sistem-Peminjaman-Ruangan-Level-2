@@ -3,25 +3,10 @@
  * ---------------------------------------------------------------------
  * TUGAS BERKAS INI : SATU-SATUNYA berkas yang boleh memakai DOM
  *                   (document, querySelector, innerHTML) dan Event Listener.
- *
- * KERJAKAN SETELAH npm run uji MENUNJUKKAN 32/32.
- *
- * CARA MENGERJAKAN :
- *   1. Jalankan index.html dengan Live Server. Buka Console (F12).
- *   2. Kerjakan TODO 4.1 - 4.5 secara berurutan. Setiap selesai satu TODO,
- *      simpan dan lihat perubahannya di browser.
- *   3. Periksa hasil dengan "Daftar Periksa Tampilan" di modul.
- *
- * ALUR BERKAS INI:
- *   LANGKAH 1 import -> LANGKAH 2 ambil elemen -> LANGKAH 3 fungsi tampilan
- *   -> LANGKAH 4 event listener -> LANGKAH 5 tampilan awal
  * ===================================================================== */
 
-// =====================================================================
-// LANGKAH 1: IMPORT (sudah jadi)
-// =====================================================================
 import { daftarRuangan } from "./data.js";
-import { formatDurasi } from "./helper.js";
+import { formatDurasi, cariRuanganCocok } from "./helper.js";
 import {
   pinjamRuangan,
   batalkanPinjaman,
@@ -29,12 +14,8 @@ import {
   sedangDipinjam,
   ambilDaftarPinjaman,
 } from "./peminjaman.js";
-import { cariRuanganCocok } from "./helper.js";
 
-// =====================================================================
-// LANGKAH 2: AMBIL ELEMEN HTML (sudah jadi)
-// CATATAN: Teks di dalam querySelector('#...') = atribut id di index.html.
-// =====================================================================
+// Ambil elemen HTML
 const elemenKatalog = document.querySelector("#katalog-ruangan");
 const formPinjam = document.querySelector("#form-pinjam");
 const pilihanRuangan = document.querySelector("#pilihan-ruangan");
@@ -47,60 +28,108 @@ const elemenTotal = document.querySelector("#total-dipinjam");
 const inputJumlahCari = document.getElementById("cari-jumlah");
 const inputFasilitas = document.getElementById("cari-fasilitas");
 const infoCari = document.getElementById("info-cari");
-const containerKatalog = document.getElementById("katalog-ruangan");
 
-// =====================================================================
-// LANGKAH 3: FUNGSI-FUNGSI TAMPILAN
-// =====================================================================
+/**
+ * Menampilkan kartu-kartu ruangan di katalog.
+ * Saat halaman baru dibuka (input kosong), menampilkan seluruh ruangan.
+ * Saat input diisi, otomatis menyaring data yang sesuai.
+ */
 
-/** Menampilkan kartu-kartu ruangan (Sudah diperbarui dengan fitur pencarian cariRuanganCocok) */
-function tampilkanKatalog() {
-  elemenKatalog.innerHTML = ""; // Kosongkan kontainer katalog
+// function tampilkanKatalog() {
+//   elemenKatalog.innerHTML = ""; // Kosongkan kontainer katalog
 
-  // Ambil nilai dari input pencarian
-  const jumlahVal = inputJumlahCari ? inputJumlahCari.value.trim() : "";
-  const fasilitasVal = inputFasilitas ? inputFasilitas.value.trim() : "";
+//   // // Ambil nilai dari input pencarian
+//   // const jumlahVal = inputJumlahCari ? inputJumlahCari.value.trim() : "";
+//   // const fasilitasVal = inputFasilitas ? inputFasilitas.value.trim() : "";
 
-  // Jika input jumlah peserta kosong (belum diketik), set ke string kosong/undefined agar menampilkan semua ruangan
-  // Jika diisi, ubah ke tipe angka (Number)
-  const jumlahOrang = jumlahVal !== "" ? Number(jumlahVal) : "";
+//   // let ruanganDitampilkan = [];
 
-  // Panggil fungsi cariRuanganCocok (jika jumlahOrang kosong dan fasilitas kosong, helper akan otomatis menampilkan semua data)
-  const ruanganDitampilkan = cariRuanganCocok(
+//   // // LOGIKA UTAMA:
+//   // // Jika kedua kotak pencarian KOSONG, tampilkan SEMUA daftarRuangan secara utuh (card muncul duluan!)
+//   // if (jumlahVal === "" && fasilitasVal === "") {
+//   //   ruanganDitampilkan = daftarRuangan;
+//   // } else {
+//   //   // Jika salah satu / keduanya DIISI, baru jalankan fungsi cariRuanganCocok
+//   //   const jumlahOrang = jumlahVal !== "" ? Number(jumlahVal) : 1; // Default aman jika jumlah kosong tapi fasilitas diisi
+//   //   ruanganDitampilkan = cariRuanganCocok(
+//   //     daftarRuangan,
+//   //     jumlahOrang,
+//   //     fasilitasVal,
+//   //   );
+//   // }
+
+//   // // Jika hasil pencarian kosong
+//   // if (ruanganDitampilkan.length === 0) {
+//   //   if (infoCari) {
+//   //     infoCari.textContent = "Tidak ada ruangan yang cocok.";
+//   //   }
+//   //   return;
+//   // }
+
+//   // // Bersihkan teks info jika ada hasil
+//   // if (infoCari) {
+//   //   infoCari.textContent = "";
+//   // }
+
+//   // Render kartu ruangan ke layar
+//   daftarRuangan.forEach((ruangan) => {
+//     const dipinjam = sedangDipinjam(ruangan.id);
+//     const kartu = document.createElement("article");
+//     kartu.className = "kartu-ruangan";
+//     kartu.innerHTML = `
+//       <h3>${ruangan.namaRuangan}</h3>
+//       <p>Kapasitas: ${ruangan.kapasitas} orang</p>
+//       <p>Fasilitas: ${ruangan.fasilitas.join(", ")}</p>
+//       <span class="status ${dipinjam ? "status-dipinjam" : "status-tersedia"}">
+//         ${dipinjam ? "Dipinjam" : "Tersedia"}
+//       </span>
+//     `;
+//     elemenKatalog.appendChild(kartu);
+//   });
+// }
+
+function ambilRuanganUntukKatalog() {
+  if (inputJumlahCari.value === "") {
+    infoCari.textContent = "";
+    return daftarRuangan;
+  }
+  const hasilCari = cariRuanganCocok(
     daftarRuangan,
-    jumlahOrang,
-    fasilitasVal,
+    Number(inputJumlahCari.value),
+    inputFasilitas.value,
   );
+  infoCari.textContent = `Ditemukan ${hasilCari.length} ruangan yang cocok.`;
+  return hasilCari;
+}
 
-  // Jika hasil pencarian kosong, tampilkan pesan
+function tampilkanKatalog() {
+  elemenKatalog.innerHTML = "";
+  const ruanganDitampilkan = ambilRuanganUntukKatalog();
   if (ruanganDitampilkan.length === 0) {
-    if (infoCari) {
-      infoCari.textContent = "Tidak ada ruangan yang cocok.";
-    }
+    elemenKatalog.innerHTML =
+      '<p class="kosong">Tidak ada ruangan yang cocok.</p>';
     return;
   }
-
-  // Bersihkan teks info jika ada hasil
-  if (infoCari) {
-    infoCari.textContent = "";
-  }
-
-  // Render kartu ruangan ke layar
   ruanganDitampilkan.forEach((ruangan) => {
+    /* isi kartu sama seperti sebelumnya */
     const dipinjam = sedangDipinjam(ruangan.id);
     const kartu = document.createElement("article");
     kartu.className = "kartu-ruangan";
     kartu.innerHTML = `
-      <h3>${ruangan.namaRuangan}</h3>
-      <p>Kapasitas: ${ruangan.kapasitas} orang</p>
-      <p>Fasilitas: ${ruangan.fasilitas.join(", ")}</p>
-      <span class="status ${dipinjam ? "status-dipinjam" : "status-tersedia"}">
-        ${dipinjam ? "Dipinjam" : "Tersedia"}
-      </span>
-    `;
+          <h3>${ruangan.namaRuangan}</h3>
+          <p>Kapasitas: ${ruangan.kapasitas} orang</p>
+          <p>Fasilitas: ${ruangan.fasilitas.join(", ")}</p>
+          <span class="status ${dipinjam ? "status-dipinjam" : "status-tersedia"}">
+            ${dipinjam ? "Dipinjam" : "Tersedia"}
+          </span>
+        `;
     elemenKatalog.appendChild(kartu);
   });
 }
+
+inputJumlahCari.addEventListener("input", tampilkanKatalog);
+inputFasilitas.addEventListener("input", tampilkanKatalog);
+
 /** Mengisi pilihan ruangan pada dropdown <select>. */
 function tampilkanPilihanRuangan() {
   pilihanRuangan.innerHTML = `<option value="">-- Pilih ruangan --</option>`;
@@ -118,16 +147,12 @@ function tampilkanPilihanRuangan() {
   });
 }
 
-/**
- * Membuat satu sel tabel <td> berisi teks.
- */
 function buatSel(isi) {
   const sel = document.createElement("td");
   sel.textContent = isi;
   return sel;
 }
 
-/** Membuat sel berisi tombol Batalkan yang menyimpan id ruangan. */
 function buatSelTombolBatal(idRuangan) {
   const sel = document.createElement("td");
   const tombol = document.createElement("button");
@@ -139,7 +164,6 @@ function buatSelTombolBatal(idRuangan) {
   return sel;
 }
 
-/** Menampilkan daftar peminjaman di tabel. */
 function tampilkanTabelPinjaman() {
   const semuaPinjaman = ambilDaftarPinjaman();
   isiTabel.innerHTML = "";
@@ -153,7 +177,6 @@ function tampilkanTabelPinjaman() {
 
   semuaPinjaman.forEach((pinjaman, indeks) => {
     const baris = document.createElement("tr");
-
     baris.appendChild(buatSel(indeks + 1));
     baris.appendChild(buatSel(pinjaman.namaRuangan));
     baris.appendChild(buatSel(pinjaman.namaPeminjam));
@@ -164,13 +187,11 @@ function tampilkanTabelPinjaman() {
   });
 }
 
-/** Menampilkan pesan sukses/gagal di bawah form. */
 function tampilkanPesan(teks, jenis) {
   elemenPesan.textContent = teks;
   elemenPesan.className = `pesan pesan-${jenis}`;
 }
 
-/** Memperbarui SELURUH tampilan sekaligus. */
 function perbaruiTampilan() {
   tampilkanKatalog();
   tampilkanPilihanRuangan();
@@ -178,10 +199,7 @@ function perbaruiTampilan() {
   elemenTotal.textContent = hitungTotalDipinjam();
 }
 
-// =====================================================================
-// LANGKAH 4: EVENT LISTENER
-// =====================================================================
-
+// Event Listener Form Submit
 formPinjam.addEventListener("submit", (event) => {
   event.preventDefault();
   const ruanganTerpilih = daftarRuangan.find(
@@ -204,6 +222,7 @@ formPinjam.addEventListener("submit", (event) => {
   }
 });
 
+// Event Listener Pembatalan Pinjaman
 isiTabel.addEventListener("click", (event) => {
   const tombol = event.target.closest(".tombol-batal");
   if (!tombol) return;
@@ -215,14 +234,11 @@ isiTabel.addEventListener("click", (event) => {
   }
 });
 
-// TAMBAHAN EVENT LISTENER PENCARIAN KATALOG SECARA REAL-TIME
-if (inputJumlahCari && inputFasilitas) {
-  // Menjalankan fungsi tampilkanKatalog setiap kali user mengetik di kolom pencarian
-  inputJumlahCari.addEventListener("input", tampilkanKatalog);
-  inputFasilitas.addEventListener("input", tampilkanKatalog);
-}
+// Event Listener untuk input pencarian katalog secara real-time
+// if (inputJumlahCari && inputFasilitas) {
+//   inputJumlahCari.addEventListener("input", tampilkanKatalog);
+//   inputFasilitas.addEventListener("input", tampilkanKatalog);
+// }
 
-// =====================================================================
-// LANGKAH 5: TAMPILAN AWAL (sudah jadi)
-// =====================================================================
+// Tampilan Awal saat halaman dimuat
 perbaruiTampilan();

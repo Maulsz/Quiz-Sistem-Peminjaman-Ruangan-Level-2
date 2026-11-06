@@ -82,33 +82,60 @@ export function cekKapasitas(jumlahOrang, kapasitasRuang) {
   return jumlahOrang > 0 && jumlahOrang <= kapasitasRuang ? true : false;
 }
 
+// export function cariRuanganCocok(daftar, jumlahOrang, kataFasilitas = "") {
+//   const hasilFilter = daftar.filter((ruangan) => {
+//     // KUNCI UTAMA: Jika jumlahOrang kosong (string kosong), jangan filter kapasitas (artinya SEMUA lolos).
+//     // Tapi jika jumlahOrang diisi, baru jalankan cekKapasitas.
+//     const muat =
+//       jumlahOrang === "" || jumlahOrang === undefined
+//         ? true
+//         : cekKapasitas(jumlahOrang, ruangan.kapasitas);
+
+//     if (!muat) return false;
+
+//     // Bersihkan keyword fasilitas dari spasi berlebih & ubah ke huruf kecil
+//     const keyword = kataFasilitas.trim().toLowerCase();
+
+//     // Jika keyword fasilitas kosong, berarti semua fasilitas cocok
+//     if (keyword === "") return true;
+
+//     // Cek apakah ada fasilitas ruangan yang mengandung kata kunci
+//     const cocokFasilitas = ruangan.fasilitas.some((fasilitas) =>
+//       fasilitas.toLowerCase().includes(keyword),
+//     );
+
+//     return cocokFasilitas;
+//   });
+
+//   // Urutkan dari kapasitas terkecil ke terbesar
+//   return [...hasilFilter].sort((a, b) => a.kapasitas - b.kapasitas);
+// }
+// * Mengembalikan ARRAY BARU berisi ruangan yang:
+// * 1. muat untuk jumlahOrang (memakai cekKapasitas di atas),
+// * 2. memiliki fasilitas yang mengandung kataFasilitas
+// * (tidak peka huruf besar/kecil, spasi di awal/akhir diabaikan;
+// * jika kataFasilitas kosong, semua fasilitas dianggap cocok),
+// * 3. diurutkan dari kapasitas TERKECIL, agar ruangan besar tidak
+// * dipakai untuk kegiatan kecil.
+// *
+// * CATATAN: Tetap fungsi murni. filter() selalu membuat array baru,
+// * sehingga sort() tidak mengubah urutan daftarRuangan aslinya.
+// *
+// * Contoh:
+// * cariRuanganCocok(daftarRuangan, 30) -> ruangan berkapasitas >= 30
+// * cariRuanganCocok(daftarRuangan, 10, 'ac') -> yang muat 10 orang DAN ada AC
+
 export function cariRuanganCocok(daftar, jumlahOrang, kataFasilitas = "") {
-  //  1. Filter ruangan berdasarkan kapasitas menggunakan cekKapasitas() (menolak 0 orang / tidak valid)
-  //  2. Filter fasilitas (mengabaikan huruf besar/kecil dan spasi di awal/akhir dengan trim & toLowerCase)
-  //  3. Urutkan berdasarkan kapasitas terkecil lebih dulu
-  //  4. Pastikan menjadi fungsi murni (mengembalikan array baru, tidak mengubah array 'daftar' asli)
+  const kata = kataFasilitas.trim().toLowerCase();
 
-  // Filter data sesuai kriteria kapasitas & fasilitas
-  const hasilFilter = daftar.filter((ruangan) => {
-    // Cek apakah muat menggunakan fungsi cekKapasitas yang sudah ada di project
-    const muat = cekKapasitas(jumlahOrang, ruangan.kapasitas);
-    if (!muat) return false;
-
-    // Bersihkan keyword fasilitas dari spasi berlebih & ubah ke huruf kecil
-    const keyword = kataFasilitas.trim().toLowerCase();
-
-    // Jika keyword kosong, berarti semua fasilitas cocok
-    if (keyword === "") return true;
-
-    // Cek apakah ada fasilitas ruangan yang mengandung kata kunci
-    const cocokFasilitas = ruangan.fasilitas.some((fasilitas) =>
-      fasilitas.toLowerCase().includes(keyword),
-    );
-
-    return cocokFasilitas;
-  });
-
-  // Urutkan dari kapasitas terkecil ke terbesar menggunakan spread operator [...],
-  // agar array 'daftar' aslinya TIDAK berubah (pure function).
-  return [...hasilFilter].sort((a, b) => a.kapasitas - b.kapasitas);
+  return daftar
+    .filter((ruangan) => cekKapasitas(jumlahOrang, ruangan.kapasitas))
+    .filter(
+      (ruangan) =>
+        kata === "" ||
+        ruangan.fasilitas.some((fasilitas) =>
+          fasilitas.toLowerCase().includes(kata),
+        ),
+    )
+    .sort((a, b) => a.kapasitas - b.kapasitas);
 }
